@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Link - LinkPulse</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/auth.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+</head>
+<body>
+    <header>
+        <a href="/" class="logo">LinkPulse</a>
+        <nav>
+            <a href="/dashboard/">Dashboard</a>
+            <a href="/create-link/" class="active">Create Link</a>
+            <a href="/analytics/">Analytics</a>
+            <a href="/profile/">Profile</a>
+            <a href="#" id="logout-btn">Logout</a>
+        </nav>
+    </header>
+    <main>
+        <h1>Create a short link</h1>
+        <form id="create-link-form" class="card" style="max-width:500px; margin:2rem auto;">
+            <div class="form-group">
+                <label for="original_url">Destination URL</label>
+                <input type="url" id="original_url" placeholder="https://example.com/..." required>
+            </div>
+            <div class="form-group">
+                <label for="short_code">Custom alias (optional)</label>
+                <input type="text" id="short_code" placeholder="my-link">
+                <div class="form-hint">Leave blank for auto-generated code.</div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">Create Link</button>
+            <div id="message" class="mt-2"></div>
+        </form>
+        <div id="success-state" class="card" style="display:none; max-width:500px; margin:2rem auto; text-align:center;">
+            <h2>Your short link is ready!</h2>
+            <p id="new-short-url" style="font-size:1.2rem; font-weight:600;"></p>
+            <div class="flex gap-1" style="justify-content:center;">
+                <button class="btn btn-outline" onclick="copyToClipboard(document.getElementById('new-short-url').textContent)">Copy</button>
+                <a href="#" id="open-link" class="btn btn-primary" target="_blank">Open</a>
+            </div>
+        </div>
+    </main>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/ui.js"></script>
+    <script src="/static/js/links.js"></script>
+</body>
+</html>

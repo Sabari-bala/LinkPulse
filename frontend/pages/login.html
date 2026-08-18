@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - LinkPulse</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=3"><link rel="stylesheet" href="/static/css/auth.css?v=3"><link rel="stylesheet" href="/static/css/dashboard.css?v=3"><link rel="stylesheet" href="/static/css/responsive.css?v=3">
+</head>
+<body>
+    <header>
+        <a href="/" style="text-decoration:none;color:inherit;"><h1>LinkPulse</h1></a>
+        <nav><a href="/">Home</a>
+            <a href="/register/">Register</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Login</h2>
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <div id="message"></div>
+    </main>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Details - LinkPulse</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=3"><link rel="stylesheet" href="/static/css/auth.css?v=3"><link rel="stylesheet" href="/static/css/dashboard.css?v=3"><link rel="stylesheet" href="/static/css/responsive.css?v=3">
+</head>
+<body>
+    <header>
+        <a href="/" style="text-decoration:none;color:inherit;"><h1>LinkPulse</h1></a>
+        <nav><a href="/">Home</a>
+            <a href="/dashboard/">Dashboard</a>
+            <a href="#" id="logout-btn">Logout</a>
+        </nav>
+    </header>
+    <main>
+        <h2>Link Details</h2>
+        <form id="link-details-form">
+            <input type="hidden" id="link-id">
+            <div>
+                <label for="original_url">Original URL</label>
+                <input type="url" id="original_url" required>
+            </div>
+            <div>
+                <label for="short_code">Short Code</label>
+                <input type="text" id="short_code" required>
+            </div>
+            <div>
+                <label for="is_active">Active</label>
+                <input type="checkbox" id="is_active">
+            </div>
+            <div>
+                <label for="expires_at">Expiration (optional)</label>
+                <input type="datetime-local" id="expires_at">
+            </div>
+            <button type="submit">Save Changes</button>
+            <button type="button" id="delete-btn" style="background:#dc3545;color:white;">Delete Link</button>
+        </form>
+        <div id="message"></div>
+    </main>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/link-details.js"></script>
+</body>
+</html>

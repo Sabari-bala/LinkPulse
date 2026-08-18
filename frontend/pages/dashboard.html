@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - LinkPulse</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+</head>
+<body>
+    <header>
+        <a href="/" class="logo">LinkPulse</a>
+        <nav>
+            <a href="/dashboard/" class="active">Dashboard</a>
+            <a href="/create-link/">Create Link</a>
+            <a href="/analytics/">Analytics</a>
+            <a href="/profile/">Profile</a>
+            <a href="#" id="logout-btn">Logout</a>
+        </nav>
+    </header>
+    <main>
+        <div class="flex items-center justify-between mb-3">
+            <div>
+                <h1 style="margin:0;">Good morning, <span id="welcome-user"></span></h1>
+                <p class="text-muted" style="margin:0;">Here's what's happening with your links.</p>
+            </div>
+            <a href="/create-link/" class="btn">+ Create Link</a>
+        </div>
+        <div class="stats-grid" id="stats-container">
+            <!-- Stats cards will be inserted by JS -->
+        </div>
+        <h2>My Links</h2>
+        <div id="links-container">Loading your links...</div>
+    </main>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/ui.js"></script>
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

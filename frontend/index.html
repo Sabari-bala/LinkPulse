@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkPulse - Smart URL Management & Analytics</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+</head>
+<body>
+    <header>
+        <a href="/" class="logo">LinkPulse</a>
+        <nav id="main-nav">
+            <a href="/">Home</a>
+            <a href="/login/">Login</a>
+            <a href="/register/" class="btn btn-outline">Get Started</a>
+        </nav>
+    </header>
+    <main>
+        <section class="hero" style="text-align:center; padding: 4rem 0 2rem;">
+            <div class="badge" style="background:var(--primary-light); color:var(--primary); margin-bottom:1rem;">Simple links. Powerful analytics.</div>
+            <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom:1rem;">Short links that tell you<br>what happens next.</h1>
+            <p style="font-size:1.2rem; color:var(--text-secondary); max-width:600px; margin:0 auto 2rem;">
+                Create branded short links, share them anywhere, and get real-time analytics on clicks, devices, and referrers.
+            </p>
+            <div class="hero-actions" style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+                <a href="/register/" class="btn btn-lg">Create your first link</a>
+                <a href="/dashboard/" class="btn btn-outline btn-lg">Explore Dashboard</a>
+            </div>
+        </section>
+        <section class="product-preview" style="margin-top:3rem;">
+            <div class="card" style="max-width:800px; margin:0 auto;">
+                <h3 style="margin-bottom:1rem;">LinkPulse Dashboard</h3>
+                <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:1rem; margin-bottom:1.5rem;">
+                    <div><div class="text-muted" style="font-size:0.875rem;">Total Clicks</div><div style="font-size:2rem; font-weight:700;">12,480</div></div>
+                    <div><div class="text-muted" style="font-size:0.875rem;">Active Links</div><div style="font-size:2rem; font-weight:700;">36</div></div>
+                    <div><div class="text-muted" style="font-size:0.875rem;">Clicks Today</div><div style="font-size:2rem; font-weight:700;">1,248</div></div>
+                    <div><div class="text-muted" style="font-size:0.875rem;">Top Link</div><div style="font-size:1.2rem; font-weight:600;">/python-course</div></div>
+                </div>
+                <div style="text-align:center; color:var(--text-muted); font-size:0.9rem;">Sample dashboard preview</div>
+            </div>
+        </section>
+        <section style="margin-top:4rem; text-align:center;">
+            <h3>Why LinkPulse?</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.5rem; margin-top:2rem;">
+                <div class="card">
+                    <h4>? Fast Redirects</h4>
+                    <p>Custom short codes that redirect instantly.</p>
+                </div>
+                <div class="card">
+                    <h4>?? Click Analytics</h4>
+                    <p>Track browser, device, and referrer.</p>
+                </div>
+                <div class="card">
+                    <h4>?? Private Links</h4>
+                    <p>Each user can only manage their own links.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="/static/js/ui.js"></script>
+    <script>
+        const token = localStorage.getItem('token');
+        const nav = document.getElementById('main-nav');
+        if (token) {
+            nav.innerHTML = `
+                <a href="/">Home</a>
+                <a href="/dashboard/">Dashboard</a>
+                <a href="#" id="landing-logout">Logout</a>
+            `;
+            document.getElementById('landing-logout').addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('token');
+                localStorage.removeItem('username');
+                window.location.href = '/login/';
+            });
+        }
+    </script>
+</body>
+</html>

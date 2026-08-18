@@ -1,0 +1,13 @@
+.auth-form {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+.auth-form h2 { margin-top: 0; text-align: center; margin-bottom: 1.5rem; }
+.auth-form input { margin-bottom: 1rem; }
+.auth-form button { width: 100%; padding: 0.75rem; font-size: 1rem; }
+.auth-form .form-footer { text-align: center; margin-top: 1rem; }
