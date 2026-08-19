@@ -1,4 +1,4 @@
-# LinkPulse — Smart URL Management & Analytics
+﻿# LinkPulse — Smart URL Management & Analytics
 
 LinkPulse is a full-stack SaaS-style URL shortener and analytics platform built with **Django REST Framework** and **Vanilla JavaScript**.
 
