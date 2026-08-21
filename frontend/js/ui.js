@@ -1,4 +1,4 @@
-// UI helpers: mobile nav, toast, delete modal, copy
+﻿// UI helpers: mobile nav, toast, delete modal, copy
 document.addEventListener('DOMContentLoaded', function() {
     const header = document.querySelector('header');
     const nav = document.querySelector('nav');
@@ -53,15 +53,27 @@ function confirmDelete(callback) {
 }
 
 function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        showToast('Copied to clipboard!', 'success');
-    }).catch(() => {
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        showToast('Copied to clipboard!', 'success');
+    return new Promise((resolve, reject) => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text)
+                .then(() => resolve())
+                .catch(() => fallbackCopy(text, resolve, reject));
+        } else {
+            fallbackCopy(text, resolve, reject);
+        }
     });
+}
+
+function fallbackCopy(text, resolve, reject) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+        document.execCommand('copy');
+        resolve();
+    } catch (err) {
+        reject(err);
+    }
+    document.body.removeChild(textarea);
 }
