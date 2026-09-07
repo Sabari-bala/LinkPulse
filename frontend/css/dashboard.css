@@ -1,9 +1,4 @@
-﻿/* ==========================================================================
-   ShortMetric — dashboard.css
-   Dashboard-specific styles: stats, search, table, mobile cards.
-   ========================================================================== */
-
-.stats-grid {
+﻿.stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
@@ -16,11 +11,11 @@
     border-radius: var(--radius-lg);
     padding: 1.25rem 1.4rem;
     box-shadow: var(--shadow-sm);
-    transition: box-shadow var(--transition), transform var(--transition);
+    transition: box-shadow var(--transition-fast), transform var(--transition-fast);
 }
 
 .stat-card:hover {
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-md);
     transform: translateY(-3px);
 }
 
@@ -34,7 +29,7 @@
 }
 
 .stat-card .value {
-    font-family: var(--font-display);
+    font-family: var(--font-sans);
     font-size: 2rem;
     font-weight: 700;
     color: var(--text-primary);
@@ -43,30 +38,21 @@
 
 /* Search input */
 #link-search {
-    width: 100%;
-    max-width: 100%;
-    min-width: min(100%, 500px);
     padding: 0.75rem 1rem 0.75rem 2.8rem;
     border: 1.5px solid var(--border);
     border-radius: var(--radius-md);
     font-size: 1rem;
     background-color: var(--surface);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B6F82' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: 0.85rem center;
-    transition: border-color var(--transition), box-shadow var(--transition);
-    box-sizing: border-box;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    width: 100%;
+    max-width: 100%;
 }
 
-#link-search:hover {
-    border-color: var(--border-strong);
-}
-
-#link-search:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(79,70,229,0.15);
-}
+#link-search:hover { border-color: var(--border-strong); }
+#link-search:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91,74,239,0.15); }
 
 /* Link table */
 .link-table {
@@ -80,7 +66,7 @@
 }
 
 .link-table thead th {
-    background: var(--surface-hover);
+    background: var(--surface-muted);
     color: var(--text-secondary);
     font-weight: 600;
     text-transform: uppercase;
@@ -146,7 +132,7 @@
     padding: 3.5rem 1.5rem;
     border-style: dashed;
     border-color: var(--border-strong);
-    background: var(--surface);
+    background: var(--surface-muted);
 }
 
 #links-container .card.text-center:hover {
@@ -169,7 +155,7 @@
 
 #links-container .card.text-center .btn:hover {
     background: var(--primary-dark);
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-md);
     transform: translateY(-2px);
 }
 
@@ -221,7 +207,7 @@
     }
 
     .link-table tbody tr:hover {
-        box-shadow: var(--shadow);
+        box-shadow: var(--shadow-md);
     }
 
     .link-table tbody td {
@@ -270,4 +256,3 @@
         width: 100%;
     }
 }
-
