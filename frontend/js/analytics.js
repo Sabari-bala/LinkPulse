@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async function() {
+﻿document.addEventListener('DOMContentLoaded', async function() {
     const token = localStorage.getItem('token');
     if (!token) {
         window.location.href = '/login/';
@@ -47,16 +47,11 @@ function renderOverallAnalytics(data) {
     if (data.recent_clicks && data.recent_clicks.length > 0) {
         html += `<h3>Recent Clicks</h3><table class="link-table"><thead><tr><th>Time</th><th>Link</th><th>Browser</th><th>Device</th></tr></thead><tbody>`;
         data.recent_clicks.forEach(click => {
-            html += `<tr>
-                <td>${new Date(click.clicked_at).toLocaleString()}</td>
-                <td>${click.link__short_code}</td>
-                <td>${click.browser}</td>
-                <td>${click.device_category}</td>
-            </tr>`;
+            html += `<tr><td>${new Date(click.clicked_at).toLocaleString()}</td><td>${click.link__short_code}</td><td>${click.browser}</td><td>${click.device_category}</td></tr>`;
         });
         html += '</tbody></table>';
     } else {
-        html += '<p class="text-muted">No clicks yet. Share your links to start collecting analytics.</p>';
+        html += '<p class="text-muted">No clicks yet.</p>';
     }
     container.innerHTML = html;
 }
@@ -74,20 +69,75 @@ function renderLinkAnalytics(data) {
         <div class="stats-grid">
             <div class="stat-card"><div class="label">Total Clicks</div><div class="value">${data.total_clicks}</div></div>
         </div>
-    `;
-    if (data.recent_clicks && data.recent_clicks.length > 0) {
-        html += `<h3>Recent Clicks</h3><table class="link-table"><thead><tr><th>Time</th><th>Browser</th><th>Device</th><th>OS</th></tr></thead><tbody>`;
-        data.recent_clicks.forEach(click => {
-            html += `<tr>
-                <td>${new Date(click.clicked_at).toLocaleString()}</td>
-                <td>${click.browser}</td>
-                <td>${click.device_category}</td>
-                <td>${click.operating_system}</td>
-            </tr>`;
-        });
-        html += '</tbody></table>';
-    } else {
-        html += '<p class="text-muted">No clicks yet for this link.</p>';
-    }
+        <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1rem;">
+            <div class="card"><h3>Clicks Over Time</h3><canvas id="clicksChart"></canvas></div>
+            <div class="card"><h3>Devices</h3><canvas id="deviceChart"></canvas></div>
+            <div class="card"><h3>Browsers</h3><canvas id="browserChart"></canvas></div>
+            <div class="card"><h3>Operating Systems</h3><canvas id="osChart"></canvas></div>
+        </div>
+        <h3 class="mt-3">Recent Clicks</h3>
+        <table class="link-table"><thead><tr><th>Time</th><th>Browser</th><th>Device</th><th>OS</th><th>Referrer</th></tr></thead><tbody>`;
+    data.recent_clicks.forEach(click => {
+        html += `<tr><td>${new Date(click.clicked_at).toLocaleString()}</td><td>${click.browser}</td><td>${click.device_category}</td><td>${click.operating_system}</td><td>${click.referrer || '-'}</td></tr>`;
+    });
+    html += '</tbody></table>';
     container.innerHTML = html;
+
+    // Charts
+    const clicksCtx = document.getElementById('clicksChart').getContext('2d');
+    new Chart(clicksCtx, {
+        type: 'line',
+        data: {
+            labels: data.clicks_over_time.map(item => item.date),
+            datasets: [{
+                label: 'Clicks',
+                data: data.clicks_over_time.map(item => item.count),
+                borderColor: '#5B4AEF',
+                backgroundColor: 'rgba(91,74,239,0.1)',
+                fill: true,
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    const deviceCtx = document.getElementById('deviceChart').getContext('2d');
+    new Chart(deviceCtx, {
+        type: 'doughnut',
+        data: {
+            labels: data.device_breakdown.map(item => item.device_category || 'Unknown'),
+            datasets: [{
+                data: data.device_breakdown.map(item => item.count),
+                backgroundColor: ['#5B4AEF','#16A34A','#D97706','#94A3B8']
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    const browserCtx = document.getElementById('browserChart').getContext('2d');
+    new Chart(browserCtx, {
+        type: 'bar',
+        data: {
+            labels: data.browser_breakdown.map(item => item.browser || 'Unknown'),
+            datasets: [{
+                label: 'Clicks',
+                data: data.browser_breakdown.map(item => item.count),
+                backgroundColor: '#5B4AEF'
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    const osCtx = document.getElementById('osChart').getContext('2d');
+    new Chart(osCtx, {
+        type: 'bar',
+        data: {
+            labels: data.os_breakdown.map(item => item.operating_system || 'Unknown'),
+            datasets: [{
+                label: 'Clicks',
+                data: data.os_breakdown.map(item => item.count),
+                backgroundColor: '#4638C8'
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
 }

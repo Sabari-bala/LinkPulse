@@ -1,4 +1,4 @@
-from django.db.models import Count, Q
+﻿from django.db.models import Count, Q
 from django.db.models.functions import TruncDate
 from django.utils import timezone
 from datetime import timedelta
@@ -17,7 +17,6 @@ class DashboardAnalyticsView(APIView):
 
     def get(self, request):
         links = Link.objects.filter(user=request.user)
-
         total_links = links.count()
         active_links = links.filter(is_active=True).filter(
             Q(expires_at__isnull=True) | Q(expires_at__gt=timezone.now())
@@ -25,10 +24,8 @@ class DashboardAnalyticsView(APIView):
         expired_links = links.filter(
             Q(is_active=False) | Q(expires_at__lte=timezone.now())
         ).count()
-
         clicks = Click.objects.filter(link__user=request.user)
         total_clicks = clicks.count()
-
         clicks_over_time = (
             clicks.filter(clicked_at__gte=timezone.now() - timedelta(days=14))
             .annotate(date=TruncDate('clicked_at'))
@@ -36,17 +33,14 @@ class DashboardAnalyticsView(APIView):
             .annotate(count=Count('id'))
             .order_by('date')
         )
-
         top_links = (
             links.annotate(click_count=Count('clicks'))
             .order_by('-click_count')[:5]
             .values('id', 'short_code', 'original_url', 'click_count')
         )
-
         recent_clicks = clicks.select_related('link').order_by('-clicked_at')[:10].values(
-            'id', 'clicked_at', 'browser', 'device_category', 'operating_system', 'link__short_code'
+            'id', 'clicked_at', 'browser', 'device_category', 'operating_system', 'referrer', 'link__short_code'
         )
-
         return Response({
             'total_links': total_links,
             'active_links': active_links,
@@ -63,15 +57,43 @@ class LinkAnalyticsView(APIView):
 
     def get(self, request, link_id):
         link = get_object_or_404(Link, id=link_id, user=request.user)
-
         clicks = Click.objects.filter(link=link)
         total_clicks = clicks.count()
 
+        # Clicks over time
         clicks_over_time = (
             clicks.annotate(date=TruncDate('clicked_at'))
             .values('date')
             .annotate(count=Count('id'))
             .order_by('date')
+        )
+
+        # Device breakdown
+        device_breakdown = (
+            clicks.values('device_category')
+            .annotate(count=Count('id'))
+            .order_by('-count')
+        )
+
+        # Browser breakdown
+        browser_breakdown = (
+            clicks.values('browser')
+            .annotate(count=Count('id'))
+            .order_by('-count')
+        )
+
+        # OS breakdown
+        os_breakdown = (
+            clicks.values('operating_system')
+            .annotate(count=Count('id'))
+            .order_by('-count')
+        )
+
+        # Referrer breakdown
+        referrer_breakdown = (
+            clicks.values('referrer')
+            .annotate(count=Count('id'))
+            .order_by('-count')
         )
 
         recent_clicks = clicks.order_by('-clicked_at')[:10].values(
@@ -89,5 +111,9 @@ class LinkAnalyticsView(APIView):
             },
             'total_clicks': total_clicks,
             'clicks_over_time': list(clicks_over_time),
+            'device_breakdown': list(device_breakdown),
+            'browser_breakdown': list(browser_breakdown),
+            'os_breakdown': list(os_breakdown),
+            'referrer_breakdown': list(referrer_breakdown),
             'recent_clicks': list(recent_clicks),
         })

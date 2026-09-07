@@ -77,3 +77,4 @@ function fallbackCopy(text, resolve, reject) {
     }
     document.body.removeChild(textarea);
 }
+

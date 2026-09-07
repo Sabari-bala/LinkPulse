@@ -29,3 +29,4 @@ async function apiRequest(url, method = 'GET', body = null, requireAuth = false)
     }
     return data;
 }
+

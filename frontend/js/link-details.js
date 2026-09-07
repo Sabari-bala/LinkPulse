@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async function() {
+﻿document.addEventListener('DOMContentLoaded', async function() {
     const token = localStorage.getItem('token');
     if (!token) {
         window.location.href = '/login/';
@@ -74,3 +74,4 @@ function showMessage(message, type) {
     msgDiv.textContent = message;
     msgDiv.style.color = type === 'error' ? 'red' : 'green';
 }
+

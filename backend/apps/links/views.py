@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, redirect
 from django.http import HttpResponse
 from django.utils import timezone
+from django.db.models import Count, Q
 
 from apps.links.models import Link
 from apps.links.serializers import LinkSerializer
@@ -15,7 +16,43 @@ class LinkListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Link.objects.filter(user=self.request.user).order_by('-created_at')
+        user = self.request.user
+        queryset = Link.objects.filter(user=user)
+
+        # Search
+        search = self.request.query_params.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(short_code__icontains=search) |
+                Q(original_url__icontains=search)
+            )
+
+        # Status filter
+        status_param = self.request.query_params.get('status')
+        if status_param == 'active':
+            queryset = queryset.filter(is_active=True).filter(
+                Q(expires_at__isnull=True) | Q(expires_at__gt=timezone.now())
+            )
+        elif status_param == 'inactive':
+            queryset = queryset.filter(is_active=False)
+        elif status_param == 'expired':
+            queryset = queryset.filter(
+                expires_at__isnull=False,
+                expires_at__lte=timezone.now()
+            )
+
+        # Sorting (whitelisted)
+        sort = self.request.query_params.get('sort', 'newest')
+        if sort == 'oldest':
+            queryset = queryset.order_by('created_at')
+        elif sort == 'clicks':
+            queryset = queryset.annotate(click_count=Count('clicks')).order_by('-click_count')
+        elif sort == 'least_clicks':
+            queryset = queryset.annotate(click_count=Count('clicks')).order_by('click_count')
+        else:  # newest
+            queryset = queryset.order_by('-created_at')
+
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

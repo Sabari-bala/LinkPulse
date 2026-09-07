@@ -9,6 +9,7 @@
 
     document.getElementById('welcome-user').textContent = username || 'there';
 
+    // Load stats
     try {
         const analytics = await apiRequest('/analytics/', 'GET');
         renderStats(analytics);
@@ -17,24 +18,13 @@
         document.getElementById('stats-container').innerHTML = '<div class="text-muted">Could not load statistics.</div>';
     }
 
-    try {
-        const data = await apiRequest('/links/', 'GET');
-        window.allLinks = data;
-        renderLinks(data);
-    } catch (error) {
-        document.getElementById('links-container').textContent = 'Failed to load links.';
-    }
+    // Initial load
+    loadLinks(1);
 
-    const searchInput = document.getElementById('link-search');
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            const query = this.value.toLowerCase();
-            const filtered = window.allLinks.filter(link => {
-                return link.short_code.toLowerCase().includes(query) || link.original_url.toLowerCase().includes(query);
-            });
-            renderLinks(filtered);
-        });
-    }
+    // Event listeners
+    document.getElementById('link-search').addEventListener('input', debounce(() => loadLinks(1), 300));
+    document.getElementById('status-filter').addEventListener('change', () => loadLinks(1));
+    document.getElementById('sort-links').addEventListener('change', () => loadLinks(1));
 
     document.getElementById('logout-btn').addEventListener('click', async function(e) {
         e.preventDefault();
@@ -44,6 +34,34 @@
         window.location.href = '/login/';
     });
 });
+
+function debounce(fn, delay) {
+    let timer;
+    return function() {
+        clearTimeout(timer);
+        timer = setTimeout(fn, delay);
+    };
+}
+
+async function loadLinks(page = 1) {
+    const search = document.getElementById('link-search').value.trim();
+    const status = document.getElementById('status-filter').value;
+    const sort = document.getElementById('sort-links').value;
+
+    const params = new URLSearchParams();
+    params.set('page', page);
+    if (search) params.set('search', search);
+    if (status) params.set('status', status);
+    if (sort) params.set('sort', sort);
+
+    try {
+        const data = await apiRequest(`/links/?${params.toString()}`, 'GET');
+        renderLinks(data.results || []);
+        renderPagination(data, page);
+    } catch (error) {
+        document.getElementById('links-container').innerHTML = '<p class="error">Failed to load links. Please try again.</p>';
+    }
+}
 
 function renderStats(analytics) {
     const container = document.getElementById('stats-container');
@@ -110,14 +128,28 @@ function renderLinks(links) {
     });
 }
 
+function renderPagination(data, currentPage) {
+    const container = document.getElementById('pagination-controls');
+    let html = '';
+    if (data.previous) {
+        html += `<button class="btn btn-outline btn-sm" onclick="loadLinks(${currentPage - 1})">Previous</button>`;
+    }
+    html += `<span class="text-muted">Page ${currentPage}</span>`;
+    if (data.next) {
+        html += `<button class="btn btn-outline btn-sm" onclick="loadLinks(${currentPage + 1})">Next</button>`;
+    }
+    container.innerHTML = html;
+}
+
 async function deleteLink(id) {
     confirmDelete(async () => {
         try {
             await apiRequest(`/links/${id}/`, 'DELETE');
             showToast('Link deleted successfully', 'success');
-            setTimeout(() => location.reload(), 500);
+            setTimeout(() => loadLinks(1), 500);
         } catch (error) {
             showToast('Unable to delete link', 'error');
         }
     });
 }
+

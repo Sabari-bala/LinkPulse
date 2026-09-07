@@ -3,72 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkPulse - Smart URL Management & Analytics</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=15">
-    <link rel="stylesheet" href="/static/css/responsive.css?v=15">
+    <title>ShortMetric — Short links. Clear insights.</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=18">
+    <link rel="stylesheet" href="/static/css/responsive.css?v=18">
 </head>
 <body>
     <header>
-        <a href="/" class="logo">LinkPulse</a>
-        <nav id="main-nav">
-            <a href="/">Home</a>
+        <a href="/" class="logo">ShortMetric</a>
+        <nav>
+            <a href="#features">Features</a>
             <a href="/login/">Login</a>
             <a href="/register/" class="btn btn-outline">Get Started</a>
         </nav>
     </header>
     <main>
-        <section class="hero" style="text-align:center; padding: 4rem 0 2rem;">
-            <div class="badge" style="background:var(--primary-light); color:var(--primary); margin-bottom:1rem;">Simple links. Powerful analytics.</div>
-            <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom:1rem;">Short links that tell you<br>what happens next.</h1>
+        <section class="hero" style="text-align:center; padding:4rem 0 2rem;">
+            <div class="badge" style="background:var(--primary-light); color:var(--primary);">Short links. Clear insights.</div>
+            <h1 style="font-size:clamp(2.5rem,5vw,4rem); margin:1rem 0;">Create, share, and understand<br>every link you share.</h1>
             <p style="font-size:1.2rem; color:var(--text-secondary); max-width:600px; margin:0 auto 2rem;">
-                Create branded short links, share them anywhere, and get real-time analytics on clicks, devices, and referrers.
+                ShortMetric is a link management platform that gives you powerful analytics for every short link you create.
             </p>
-            <div class="hero-actions" style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+            <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
                 <a href="/register/" class="btn btn-lg">Create your first link</a>
-                <a href="/dashboard/" class="btn btn-outline btn-lg">Explore Dashboard</a>
+                <a href="/dashboard/" class="btn btn-outline btn-lg">View Dashboard</a>
             </div>
         </section>
-        <section class="product-preview" style="margin-top:3rem;">
-            <div class="card" style="max-width:800px; margin:0 auto;">
-                <h3 style="margin-bottom:1rem;">LinkPulse Dashboard</h3>
-                <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:1rem; margin-bottom:1.5rem;">
-                    <div><div class="text-muted" style="font-size:0.875rem;">Total Clicks</div><div style="font-size:2rem; font-weight:700;">12,480</div></div>
-                    <div><div class="text-muted" style="font-size:0.875rem;">Active Links</div><div style="font-size:2rem; font-weight:700;">36</div></div>
-                    <div><div class="text-muted" style="font-size:0.875rem;">Clicks Today</div><div style="font-size:2rem; font-weight:700;">1,248</div></div>
-                    <div><div class="text-muted" style="font-size:0.875rem;">Top Link</div><div style="font-size:1.2rem; font-weight:600;">/python-course</div></div>
+        <section style="margin:4rem 0;">
+            <div style="text-align:center; max-width:600px; margin:0 auto;">
+                <h2>How it works</h2>
+                <div style="display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; margin-top:2rem;">
+                    <div style="flex:1; min-width:120px;"><div style="font-size:2rem;">✂️</div><h3>Create</h3><p>Shorten any link</p></div>
+                    <div style="flex:1; min-width:120px;"><div style="font-size:2rem;">📤</div><h3>Share</h3><p>Use it anywhere</p></div>
+                    <div style="flex:1; min-width:120px;"><div style="font-size:2rem;">📊</div><h3>Track</h3><p>See clicks & devices</p></div>
                 </div>
-                <div style="text-align:center; color:var(--text-muted); font-size:0.9rem;">Sample dashboard preview</div>
             </div>
         </section>
-        <section style="margin-top:4rem; text-align:center;">
-            <h3>Why LinkPulse?</h3>
-            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1.5rem; margin-top:2rem;">
-                <div class="card">
-                    <h4>? Fast Redirects</h4>
-                    <p>Custom short codes that redirect instantly.</p>
-                </div>
-                <div class="card">
-                    <h4>?? Click Analytics</h4>
-                    <p>Track browser, device, and referrer.</p>
-                </div>
-                <div class="card">
-                    <h4>?? Private Links</h4>
-                    <p>Each user can only manage their own links.</p>
-                </div>
+        <section id="features" style="margin:4rem 0;">
+            <h2 style="text-align:center;">Features</h2>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.5rem; margin-top:2rem;">
+                <div class="card"><h3>Short Links</h3><p>Custom aliases and random codes.</p></div>
+                <div class="card"><h3>Click Analytics</h3><p>Browser, device, OS, referrer.</p></div>
+                <div class="card"><h3>Link Management</h3><p>Edit, disable, expire, delete.</p></div>
+                <div class="card"><h3>Dashboard</h3><p>Overview of all link performance.</p></div>
             </div>
+        </section>
+        <section style="margin:4rem 0; text-align:center;">
+            <h2>Start tracking your links today</h2>
+            <a href="/register/" class="btn btn-lg">Get Started</a>
         </section>
     </main>
-    <script src="/static/js/ui.js?v=15"></script>
+    <footer style="background:var(--surface); border-top:1px solid var(--border); padding:2rem; text-align:center; color:var(--text-muted);">
+        <p>ShortMetric is an independent portfolio project.</p>
+    </footer>
+    <script src="/static/js/ui.js?v=18"></script>
     <script>
         const token = localStorage.getItem('token');
-        const nav = document.getElementById('main-nav');
+        const nav = document.querySelector('nav');
         if (token) {
             nav.innerHTML = `
-                <a href="/">Home</a>
                 <a href="/dashboard/">Dashboard</a>
-                <a href="#" id="landing-logout">Logout</a>
+                <a href="/create-link/">Create Link</a>
+                <a href="/analytics/">Analytics</a>
+                <a href="/profile/">Profile</a>
+                <a href="#" id="logout-btn">Logout</a>
             `;
-            document.getElementById('landing-logout').addEventListener('click', function(e) {
+            document.getElementById('logout-btn').addEventListener('click', function(e) {
                 e.preventDefault();
                 localStorage.removeItem('token');
                 localStorage.removeItem('username');
@@ -78,14 +77,4 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
 

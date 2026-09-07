@@ -66,3 +66,4 @@ function renderRecentLinks(links) {
     html += '</tbody></table></div>';
     container.innerHTML = html;
 }
+
