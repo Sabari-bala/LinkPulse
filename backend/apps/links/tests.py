@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+﻿from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import timedelta
 from rest_framework.authtoken.models import Token
@@ -45,12 +45,13 @@ class LinkTests(APITestCase):
         Link.objects.create(user=self.other_user, original_url='https://example.com/other', short_code='otherlink')
         response = self.client.get('/api/links/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 0)  # owner should not see other's link
+        # Paginated response: results should be empty
+        self.assertEqual(len(response.data['results']), 0)
 
     def test_redirect_records_click(self):
         link = Link.objects.create(user=self.user, original_url='https://example.com/target', short_code='clickme')
         response = self.client.get('/clickme/')
-        self.assertEqual(response.status_code, 302)  # redirect
+        self.assertEqual(response.status_code, 302)
         self.assertEqual(Click.objects.filter(link=link).count(), 1)
 
     def test_expired_link_returns_404(self):

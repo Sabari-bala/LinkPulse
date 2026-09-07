@@ -1,8 +1,13 @@
-from rest_framework import generics
+﻿from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404, redirect
+from django.http import HttpResponse
+from django.utils import timezone
 
 from apps.links.models import Link
 from apps.links.serializers import LinkSerializer
+from apps.analytics.models import Click
+from apps.analytics.utils import parse_user_agent
 
 
 class LinkListCreateView(generics.ListCreateAPIView):
@@ -10,7 +15,7 @@ class LinkListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Link.objects.filter(user=self.request.user)
+        return Link.objects.filter(user=self.request.user).order_by('-created_at')
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -22,12 +27,6 @@ class LinkDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Link.objects.filter(user=self.request.user)
-from django.shortcuts import get_object_or_404, redirect
-from django.http import HttpResponse
-from django.utils import timezone
-
-from apps.analytics.models import Click
-from apps.analytics.utils import parse_user_agent
 
 
 def redirect_short_link(request, short_code):
