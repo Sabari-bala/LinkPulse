@@ -117,10 +117,12 @@ button, .btn {
     white-space: nowrap;
 }
 
-button:hover, .btn:hover { background: var(--primary-dark); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+/* ✅ Primary button hover: darker purple, text stays white */
+button:hover, .btn:hover { background: var(--primary-dark); color: white; box-shadow: var(--shadow-md); transform: translateY(-1px); }
 button:active, .btn:active { transform: translateY(0); }
 button:disabled, .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
+/* ✅ Outline button hover: light purple background, text stays dark purple */
 .btn-outline {
     background: transparent;
     border-color: var(--primary);
@@ -128,10 +130,12 @@ button:disabled, .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 }
 .btn-outline:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary-dark); }
 
-.btn-danger { background: var(--danger); color: white; }
-.btn-danger:hover { background: #B91C1C; }
+/* ✅ Danger outline hover: light red background, text stays dark red */
 .btn-danger-outline { background: transparent; border-color: var(--danger); color: var(--danger); }
 .btn-danger-outline:hover { background: var(--danger-light); color: var(--danger); }
+
+.btn-danger { background: var(--danger); color: white; }
+.btn-danger:hover { background: #B91C1C; }
 
 .btn-success { background: var(--success); color: white; }
 .btn-success:hover { background: #15803D; }
@@ -221,10 +225,5 @@ tr:hover td { background-color: var(--surface-hover); }
 @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
 @media (prefers-reduced-motion: reduce) {
-    * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-    }
+    * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
