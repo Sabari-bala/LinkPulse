@@ -12,3 +12,8 @@ Thumbs.db
 .DS_Store
 update_ui.ps1
 update_ui.ps1
+
+# React app
+web/node_modules
+web/dist
+web/.env
