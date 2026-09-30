@@ -2,9 +2,10 @@
 import { BarChart3, FileText, Trash2, ExternalLink } from 'lucide-react';
 import Badge from './Badge';
 import CopyButton from './CopyButton';
+import { getShortUrl } from '../lib/shortUrl';
 
 export default function LinkRow({ link, onDelete }) {
-  const shortUrl = `${window.location.origin}/${link.short_code}`;
+  const shortUrl = getShortUrl(link.short_code);
   const status =
     !link.is_active
       ? { label: 'Disabled', variant: 'danger' }
@@ -29,10 +30,7 @@ export default function LinkRow({ link, onDelete }) {
         </div>
       </td>
       <td className="p-4 max-w-xs">
-        <div
-          className="text-ink-secondary text-sm truncate"
-          title={link.original_url}
-        >
+        <div className="text-ink-secondary text-sm truncate" title={link.original_url}>
           {link.original_url}
         </div>
       </td>
@@ -44,27 +42,13 @@ export default function LinkRow({ link, onDelete }) {
       </td>
       <td className="p-4">
         <div className="flex items-center gap-1.5">
-          <Link
-            to={`/analytics/${link.id}`}
-            className="btn btn-sm btn-outline"
-            title="Analytics"
-          >
+          <Link to={`/analytics/${link.id}`} className="btn btn-sm btn-outline" title="Analytics">
             <BarChart3 className="w-3.5 h-3.5" />
           </Link>
-          <Link
-            to={`/link-details/${link.id}`}
-            className="btn btn-sm btn-outline"
-            title="Details"
-          >
+          <Link to={`/link-details/${link.id}`} className="btn btn-sm btn-outline" title="Details">
             <FileText className="w-3.5 h-3.5" />
           </Link>
-          <a
-            href={shortUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="btn btn-sm btn-outline"
-            title="Open"
-          >
+          <a href={shortUrl} target="_blank" rel="noreferrer" className="btn btn-sm btn-outline" title="Open">
             <ExternalLink className="w-3.5 h-3.5" />
           </a>
           <button

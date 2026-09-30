@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { PlusCircle, Copy, Check, BarChart3, FileText } from 'lucide-react';
 import { Input } from '../components';
 import { linksService } from '../services/linksService';
+import { getShortUrl } from '../lib/shortUrl';
 
 const RESERVED_ALIASES = [
   'api', 'admin', 'login', 'register', 'dashboard', 'analytics',
@@ -11,11 +12,7 @@ const RESERVED_ALIASES = [
 
 export default function CreateLinkPage() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    original_url: '',
-    short_code: '',
-    expires_at: '',
-  });
+  const [form, setForm] = useState({ original_url: '', short_code: '', expires_at: '' });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [created, setCreated] = useState(null);
@@ -29,8 +26,6 @@ export default function CreateLinkPage() {
 
   const validate = () => {
     const next = {};
-
-    // URL validation
     const url = form.original_url.trim();
     if (!url) {
       next.original_url = 'Destination URL is required.';
@@ -47,7 +42,6 @@ export default function CreateLinkPage() {
       }
     }
 
-    // Alias validation
     const alias = form.short_code.trim();
     if (alias) {
       if (!/^[a-zA-Z0-9]+$/.test(alias)) {
@@ -61,7 +55,6 @@ export default function CreateLinkPage() {
       }
     }
 
-    // Expiration
     if (form.expires_at) {
       const exp = new Date(form.expires_at);
       if (exp <= new Date()) {
@@ -79,9 +72,7 @@ export default function CreateLinkPage() {
 
     setSubmitting(true);
     try {
-      const payload = {
-        original_url: form.original_url.trim(),
-      };
+      const payload = { original_url: form.original_url.trim() };
       if (form.short_code.trim()) payload.short_code = form.short_code.trim();
       if (form.expires_at) payload.expires_at = new Date(form.expires_at).toISOString();
 
@@ -92,13 +83,9 @@ export default function CreateLinkPage() {
       let serverError = 'Failed to create link. Please try again.';
       if (data) {
         if (data.original_url) {
-          serverError = Array.isArray(data.original_url)
-            ? data.original_url[0]
-            : data.original_url;
+          serverError = Array.isArray(data.original_url) ? data.original_url[0] : data.original_url;
         } else if (data.short_code) {
-          serverError = Array.isArray(data.short_code)
-            ? data.short_code[0]
-            : data.short_code;
+          serverError = Array.isArray(data.short_code) ? data.short_code[0] : data.short_code;
         } else if (data.detail) {
           serverError = data.detail;
         }
@@ -111,7 +98,7 @@ export default function CreateLinkPage() {
 
   const handleCopy = async () => {
     if (!created) return;
-    const url = `${window.location.origin}/${created.short_code}`;
+    const url = getShortUrl(created.short_code);
     try {
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(url);
@@ -125,9 +112,7 @@ export default function CreateLinkPage() {
       }
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-    } catch {
-      // ignore
-    }
+    } catch {}
   };
 
   const handleCreateAnother = () => {
@@ -136,29 +121,19 @@ export default function CreateLinkPage() {
     setErrors({});
   };
 
-  // ---- Success state ----
   if (created) {
-    const shortUrl = `${window.location.origin}/${created.short_code}`;
+    const shortUrl = getShortUrl(created.short_code);
     return (
       <div className="max-w-2xl mx-auto">
         <div className="card text-center py-10">
           <div className="w-14 h-14 mx-auto rounded-full bg-success-light flex items-center justify-center mb-4">
             <Check className="w-7 h-7 text-success" />
           </div>
-          <h2 className="text-2xl font-bold text-ink-primary mb-1">
-            Your link is ready!
-          </h2>
-          <p className="text-sm text-ink-muted mb-6">
-            Copy and share it anywhere.
-          </p>
+          <h2 className="text-2xl font-bold text-ink-primary mb-1">Your link is ready!</h2>
+          <p className="text-sm text-ink-muted mb-6">Copy and share it anywhere.</p>
 
           <div className="bg-surface-muted border border-border rounded-md p-4 mb-6 flex items-center justify-between gap-3 flex-wrap">
-            <a
-              href={shortUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="text-primary font-semibold break-all text-left"
-            >
+            <a href={shortUrl} target="_blank" rel="noreferrer" className="text-primary font-semibold break-all text-left">
               {shortUrl}
             </a>
             <button onClick={handleCopy} className="btn btn-outline btn-sm">
@@ -187,7 +162,6 @@ export default function CreateLinkPage() {
     );
   }
 
-  // ---- Form state ----
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-6">
@@ -239,11 +213,7 @@ export default function CreateLinkPage() {
         />
 
         <div className="flex gap-2 pt-2">
-          <button
-            type="submit"
-            className="btn btn-primary flex-1"
-            disabled={submitting}
-          >
+          <button type="submit" className="btn btn-primary flex-1" disabled={submitting}>
             {submitting ? 'Creating...' : 'Create Link'}
           </button>
           <button

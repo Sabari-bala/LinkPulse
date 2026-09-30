@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Input, Badge, LoadingState, ErrorState, ConfirmDialog } from '../components';
 import { linksService } from '../services/linksService';
+import { getShortUrl } from '../lib/shortUrl';
 
 export default function LinkDetailsPage() {
   const { id } = useParams();
@@ -43,7 +44,7 @@ export default function LinkDetailsPage() {
           ? new Date(data.expires_at).toISOString().slice(0, 16)
           : '',
       });
-    } catch (err) {
+    } catch {
       setError(true);
     } finally {
       setLoading(false);
@@ -124,7 +125,7 @@ export default function LinkDetailsPage() {
   };
 
   const handleCopy = async () => {
-    const url = `${window.location.origin}/${link.short_code}`;
+    const url = getShortUrl(link.short_code);
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
@@ -146,7 +147,7 @@ export default function LinkDetailsPage() {
   if (loading) return <LoadingState message="Loading link details..." />;
   if (error || !link) return <ErrorState message="Could not load this link." onRetry={load} />;
 
-  const shortUrl = `${window.location.origin}/${link.short_code}`;
+  const shortUrl = getShortUrl(link.short_code);
   const status = !link.is_active
     ? { label: 'Disabled', variant: 'danger' }
     : link.is_expired
@@ -155,7 +156,6 @@ export default function LinkDetailsPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      {/* Toast */}
       {toast && (
         <div className={`fixed top-20 right-6 z-50 px-4 py-3 rounded-md shadow-lg text-white text-sm ${
           toast.type === 'error' ? 'bg-danger' : 'bg-success'
@@ -164,7 +164,6 @@ export default function LinkDetailsPage() {
         </div>
       )}
 
-      {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Link to="/dashboard" className="btn btn-sm btn-outline">
           <ArrowLeft className="w-4 h-4" /> Back
@@ -176,18 +175,12 @@ export default function LinkDetailsPage() {
         <Badge variant={status.variant}>{status.label}</Badge>
       </div>
 
-      {/* Short URL card */}
       <div className="card mb-6">
         <div className="text-xs font-semibold uppercase tracking-wide text-ink-muted mb-2">
           Short URL
         </div>
         <div className="flex items-center justify-between gap-3 flex-wrap">
-          <a
-            href={shortUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="text-primary font-semibold text-lg break-all"
-          >
+          <a href={shortUrl} target="_blank" rel="noreferrer" className="text-primary font-semibold text-lg break-all">
             {shortUrl}
           </a>
           <div className="flex gap-2">
@@ -195,19 +188,13 @@ export default function LinkDetailsPage() {
               {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               {copied ? 'Copied' : 'Copy'}
             </button>
-            <a
-              href={shortUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="btn btn-outline btn-sm"
-            >
+            <a href={shortUrl} target="_blank" rel="noreferrer" className="btn btn-outline btn-sm">
               <ExternalLink className="w-4 h-4" /> Open
             </a>
           </div>
         </div>
       </div>
 
-      {/* Info grid */}
       <div className="grid md:grid-cols-2 gap-4 mb-6">
         <div className="card">
           <div className="text-xs font-semibold uppercase text-ink-muted mb-1">Clicks</div>
@@ -215,27 +202,20 @@ export default function LinkDetailsPage() {
         </div>
         <div className="card">
           <div className="text-xs font-semibold uppercase text-ink-muted mb-1">Created</div>
-          <div className="text-sm text-ink-secondary">
-            {new Date(link.created_at).toLocaleString()}
-          </div>
+          <div className="text-sm text-ink-secondary">{new Date(link.created_at).toLocaleString()}</div>
         </div>
         <div className="card">
           <div className="text-xs font-semibold uppercase text-ink-muted mb-1">Updated</div>
-          <div className="text-sm text-ink-secondary">
-            {new Date(link.updated_at).toLocaleString()}
-          </div>
+          <div className="text-sm text-ink-secondary">{new Date(link.updated_at).toLocaleString()}</div>
         </div>
         <div className="card">
           <div className="text-xs font-semibold uppercase text-ink-muted mb-1">Expiration</div>
           <div className="text-sm text-ink-secondary">
-            {link.expires_at
-              ? new Date(link.expires_at).toLocaleString()
-              : 'No expiration set'}
+            {link.expires_at ? new Date(link.expires_at).toLocaleString() : 'No expiration set'}
           </div>
         </div>
       </div>
 
-      {/* QR Code */}
       <div className="card mb-6 flex items-center gap-6 flex-wrap">
         <div>
           <div className="text-xs font-semibold uppercase text-ink-muted mb-2">QR Code</div>
@@ -248,7 +228,6 @@ export default function LinkDetailsPage() {
         </div>
       </div>
 
-      {/* Edit form */}
       <div className="card mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-ink-primary">
@@ -260,10 +239,7 @@ export default function LinkDetailsPage() {
             </button>
           )}
           {editing && (
-            <button
-              onClick={() => { setEditing(false); setFormErrors({}); }}
-              className="btn btn-sm btn-outline"
-            >
+            <button onClick={() => { setEditing(false); setFormErrors({}); }} className="btn btn-sm btn-outline">
               <X className="w-3.5 h-3.5" /> Cancel
             </button>
           )}
@@ -272,15 +248,11 @@ export default function LinkDetailsPage() {
         {!editing ? (
           <div className="space-y-3 text-sm">
             <div>
-              <div className="text-xs font-semibold uppercase text-ink-muted mb-1">
-                Original URL
-              </div>
+              <div className="text-xs font-semibold uppercase text-ink-muted mb-1">Original URL</div>
               <div className="text-ink-secondary break-all">{link.original_url}</div>
             </div>
             <div>
-              <div className="text-xs font-semibold uppercase text-ink-muted mb-1">
-                Alias
-              </div>
+              <div className="text-xs font-semibold uppercase text-ink-muted mb-1">Alias</div>
               <div className="text-ink-secondary">{link.short_code}</div>
             </div>
           </div>
@@ -291,32 +263,12 @@ export default function LinkDetailsPage() {
                 {formErrors.form}
               </div>
             )}
-            <Input
-              id="original_url"
-              name="original_url"
-              type="url"
-              label="Original URL"
-              value={form.original_url}
-              onChange={handleChange}
-              error={formErrors.original_url}
-            />
-            <Input
-              id="short_code"
-              name="short_code"
-              label="Alias"
-              value={form.short_code}
-              onChange={handleChange}
-              error={formErrors.short_code}
-            />
-            <Input
-              id="expires_at"
-              name="expires_at"
-              type="datetime-local"
-              label="Expiration"
-              value={form.expires_at}
-              onChange={handleChange}
-              error={formErrors.expires_at}
-            />
+            <Input id="original_url" name="original_url" type="url" label="Original URL"
+              value={form.original_url} onChange={handleChange} error={formErrors.original_url} />
+            <Input id="short_code" name="short_code" label="Alias"
+              value={form.short_code} onChange={handleChange} error={formErrors.short_code} />
+            <Input id="expires_at" name="expires_at" type="datetime-local" label="Expiration"
+              value={form.expires_at} onChange={handleChange} error={formErrors.expires_at} />
             <button type="submit" className="btn btn-primary" disabled={saving}>
               <Save className="w-4 h-4" />
               {saving ? 'Saving...' : 'Save Changes'}
@@ -325,14 +277,10 @@ export default function LinkDetailsPage() {
         )}
       </div>
 
-      {/* Actions */}
       <div className="card flex flex-wrap gap-2 justify-between items-center">
         <div className="flex gap-2 flex-wrap">
-          <button
-            onClick={handleToggle}
-            disabled={toggling}
-            className={`btn ${link.is_active ? 'btn-outline' : 'btn-primary'}`}
-          >
+          <button onClick={handleToggle} disabled={toggling}
+            className={`btn ${link.is_active ? 'btn-outline' : 'btn-primary'}`}>
             {link.is_active ? <PowerOff className="w-4 h-4" /> : <Power className="w-4 h-4" />}
             {toggling ? 'Updating...' : link.is_active ? 'Disable Link' : 'Enable Link'}
           </button>
@@ -340,10 +288,7 @@ export default function LinkDetailsPage() {
             <BarChart3 className="w-4 h-4" /> Analytics
           </Link>
         </div>
-        <button
-          onClick={() => setConfirmDelete(true)}
-          className="btn btn-danger-outline"
-        >
+        <button onClick={() => setConfirmDelete(true)} className="btn btn-danger-outline">
           <Trash2 className="w-4 h-4" /> Delete Link
         </button>
       </div>

@@ -2,9 +2,10 @@
 import { BarChart3, FileText, Trash2, ExternalLink } from 'lucide-react';
 import Badge from './Badge';
 import CopyButton from './CopyButton';
+import { getShortUrl } from '../lib/shortUrl';
 
 export default function LinkCard({ link, onDelete }) {
-  const shortUrl = `${window.location.origin}/${link.short_code}`;
+  const shortUrl = getShortUrl(link.short_code);
   const status =
     !link.is_active
       ? { label: 'Disabled', variant: 'danger' }
@@ -15,12 +16,7 @@ export default function LinkCard({ link, onDelete }) {
   return (
     <div className="card p-4 space-y-3">
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <a
-          href={shortUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="text-primary font-semibold break-all"
-        >
+        <a href={shortUrl} target="_blank" rel="noreferrer" className="text-primary font-semibold break-all">
           /{link.short_code}
         </a>
         <Badge variant={status.variant}>{status.label}</Badge>
@@ -43,18 +39,10 @@ export default function LinkCard({ link, onDelete }) {
         <Link to={`/link-details/${link.id}`} className="btn btn-sm btn-outline flex-1">
           <FileText className="w-3.5 h-3.5" /> Details
         </Link>
-        <a
-          href={shortUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="btn btn-sm btn-outline flex-1"
-        >
+        <a href={shortUrl} target="_blank" rel="noreferrer" className="btn btn-sm btn-outline flex-1">
           <ExternalLink className="w-3.5 h-3.5" /> Open
         </a>
-        <button
-          onClick={() => onDelete(link.id)}
-          className="btn btn-sm btn-danger-outline flex-1"
-        >
+        <button onClick={() => onDelete(link.id)} className="btn btn-sm btn-danger-outline flex-1">
           <Trash2 className="w-3.5 h-3.5" /> Delete
         </button>
       </div>
