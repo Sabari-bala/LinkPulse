@@ -1,4 +1,5 @@
-﻿from django.contrib.auth import authenticate, login, logout
+﻿from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -11,7 +12,7 @@ from .serializers import RegisterSerializer
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
-    authentication_classes = []  # no session/csrf
+    authentication_classes = []
 
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
@@ -79,3 +80,79 @@ class UserProfileView(APIView):
             'last_login': user.last_login,
             'recent_links': recent_links,
         })
+
+    def patch(self, request):
+        """Update email (and username if provided)."""
+        user = request.user
+        new_email = request.data.get('email')
+        new_username = request.data.get('username')
+
+        if new_username and new_username != user.username:
+            if User.objects.filter(username=new_username).exclude(pk=user.pk).exists():
+                return Response(
+                    {'username': 'This username is already taken.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user.username = new_username
+
+        if new_email is not None:
+            if new_email and User.objects.filter(email=new_email).exclude(pk=user.pk).exists():
+                return Response(
+                    {'email': 'This email is already in use.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            user.email = new_email
+
+        user.save()
+
+        # If username changed, refresh token so it reflects new user
+        if new_username and new_username != user.username:
+            Token.objects.filter(user=user).delete()
+            token = Token.objects.create(user=user)
+
+        return Response({
+            'username': user.username,
+            'email': user.email,
+            'message': 'Profile updated successfully',
+        })
+
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def post(self, request):
+        user = request.user
+        current = request.data.get('current_password')
+        new_password = request.data.get('new_password')
+        confirm = request.data.get('confirm_password')
+
+        if not user.check_password(current):
+            return Response(
+                {'current_password': 'Current password is incorrect.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not new_password or len(new_password) < 8:
+            return Response(
+                {'new_password': 'New password must be at least 8 characters.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if new_password != confirm:
+            return Response(
+                {'confirm_password': 'Passwords do not match.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if current == new_password:
+            return Response(
+                {'new_password': 'New password must be different from current password.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user.set_password(new_password)
+        user.save()
+        update_session_auth_hash(request, user)
+
+        return Response({'message': 'Password changed successfully'})
