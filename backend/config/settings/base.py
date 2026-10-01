@@ -18,7 +18,6 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.links',
     'apps.analytics',
-    'apps.core',
     'rest_framework',
     'rest_framework.authtoken',
 ]

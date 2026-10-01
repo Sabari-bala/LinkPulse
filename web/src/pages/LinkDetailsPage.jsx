@@ -1,9 +1,9 @@
-﻿import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import {
   ArrowLeft, Copy, Check, Save, Trash2, Power, PowerOff, ExternalLink,
-  BarChart3, Pencil, X,
+  BarChart3, Pencil, X, Download,
 } from 'lucide-react';
 import { Input, Badge, LoadingState, ErrorState, ConfirmDialog } from '../components';
 import { linksService } from '../services/linksService';
@@ -12,6 +12,7 @@ import { getShortUrl } from '../lib/shortUrl';
 export default function LinkDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const qrContainerRef = useRef(null);
 
   const [link, setLink] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -133,6 +134,32 @@ export default function LinkDetailsPage() {
     } catch {}
   };
 
+  const handleDownloadQR = () => {
+    if (!qrContainerRef.current) return;
+    const svg = qrContainerRef.current.querySelector('svg');
+    if (!svg) return;
+
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    const size = 512;
+    canvas.width = size;
+    canvas.height = size;
+
+    img.onload = () => {
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, size, size);
+      ctx.drawImage(img, 0, 0, size, size);
+      const pngFile = canvas.toDataURL('image/png');
+      const downloadLink = document.createElement('a');
+      downloadLink.download = `${link.short_code}-qr.png`;
+      downloadLink.href = pngFile;
+      downloadLink.click();
+    };
+    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+  };
+
   const handleDelete = async () => {
     setDeleting(true);
     try {
@@ -216,15 +243,25 @@ export default function LinkDetailsPage() {
         </div>
       </div>
 
-      <div className="card mb-6 flex items-center gap-6 flex-wrap">
+      <div className="card mb-6 flex items-start gap-6 flex-wrap">
         <div>
           <div className="text-xs font-semibold uppercase text-ink-muted mb-2">QR Code</div>
-          <div className="bg-white p-3 border border-border rounded-md inline-block">
+          <div
+            ref={qrContainerRef}
+            className="bg-white p-3 border border-border rounded-md inline-block"
+          >
             <QRCodeSVG value={shortUrl} size={140} level="M" fgColor="#15152A" />
           </div>
+          <button
+            onClick={handleDownloadQR}
+            className="btn btn-outline btn-sm mt-3 flex items-center gap-1.5"
+            type="button"
+          >
+            <Download className="w-3.5 h-3.5" /> Download PNG
+          </button>
         </div>
         <div className="text-sm text-ink-muted max-w-xs">
-          Scan this QR code to open the short link. Works on any phone camera.
+          Scan this QR code to open the short link. Works on any phone camera. Download it to print or share.
         </div>
       </div>
 
